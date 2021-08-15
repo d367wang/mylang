@@ -13,17 +13,19 @@ options {
 // The suffix '^' means make it a root.
 // The suffix '!' means ignore it.
 
-expr: multExpr ((PLUS^ | MINUS^) multExpr)*
+expr: multDivExpr ((PLUS^ | MINUS^) multDivExpr)*
     ;
 
 PLUS: '+';
 MINUS: '-';
 
-multExpr
-    : atom (TIMES^ atom)*
+multDivExpr
+    : atom ((TIMES^ | DIVIDE^) atom)*
     ;
 
+
 TIMES: '*';
+DIVIDE: '/';
 
 atom: INT
     | ID
@@ -33,16 +35,29 @@ atom: INT
 stmt: expr NEWLINE -> expr  // tree rewrite syntax
     | ID ASSIGN expr NEWLINE -> ^(ASSIGN ID expr) // tree notation
     | NEWLINE ->   // ignore
+    | VAR ID ASSIGN expr NEWLINE -> ^(VAR ID expr)
+    | PRINT expr NEWLINE -> ^(PRINT expr)
+    | block 
     ;
 
 ASSIGN: '=';
+VAR: 'var' ;
+PRINT: 'print' ;
+BLOCK: '&' ;
+
+block_stmts: stmt* 
+    ;
+
+block: '{' block_stmts '}' -> ^(BLOCK block_stmts)
+    ;
+
 
 prog
-    : (stmt {pANTLR3_STRING s = $stmt.tree->toStringTree($stmt.tree);
+    : (block_stmts {pANTLR3_STRING s = $block_stmts.tree->toStringTree($block_stmts.tree);
              assert(s->chars);
              printf(" tree \%s\n", s->chars);
             }
-        )+
+        )
     ;
 
 ID: ('a'..'z'|'A'..'Z')+ ;
