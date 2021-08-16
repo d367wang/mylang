@@ -18,9 +18,14 @@ const char* ExprEvaluator::getText(pANTLR3_BASE_TREE tree) {
 }
 
 
-int ExprEvaluator::find(string key) {
+/* return the reference to mapped value for "key" */
+/* technique: return reference (actually address) to some heap memory */
+int& ExprEvaluator::find(string key) {
     if (mmap.count(key)) return mmap[key];
-    assert(next != nullptr);
+    if (next == nullptr) {
+        cout << "undefined variable: " << key << endl;
+        exit(-1);
+    }
     return next->find(key);
 }
 
@@ -66,16 +71,16 @@ int ExprEvaluator::eval(pANTLR3_BASE_TREE root) {
 
             case ASSIGN: {
                 string varname = getText(getChild(root, 0));
-                int rval = eval(getChild(root, 1));
-                mmap[varname] = rval;
-                return rval;
+                int& store = find(varname);
+                store = eval(getChild(root, 1));
+                return store;
             } 
 
             case VAR: {
                 string varname = getText(getChild(root, 0));
                 if (mmap.count(varname)) {
-                    cout << "redefine variable \"" << varname << "\"" << endl;
-                    return -1;
+                    cout << "redefined variable \"" << varname << "\"" << endl;
+                    exit(-1);
                 } 
 
                 if (getChild(root, 1) != nullptr) {

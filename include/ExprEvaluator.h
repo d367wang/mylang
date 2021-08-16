@@ -19,7 +19,7 @@ public:
     ExprEvaluator* next; // outer scope
     ExprEvaluator(ExprEvaluator *next) : next(next) {}
     int eval(pANTLR3_BASE_TREE root);
-    int find(string key); 
+    int& find(string key); 
 };
 
 #endif
