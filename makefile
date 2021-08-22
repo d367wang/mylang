@@ -8,4 +8,4 @@ all:
 	-I./include -I./parser -I./parser/include
 
 clean:
-	rm -rf $TARGET
+	rm -rf $(TARGET)
