@@ -1,4 +1,4 @@
-grammar hl;
+grammar Lang;
 
 options {
     language = C;
