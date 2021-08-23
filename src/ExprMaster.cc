@@ -1,17 +1,21 @@
 #include "ExprMaster.h"
-#include "Utils.h"
+#include "TreeUtils.h"
 #include "Chain.h"
 #include <iostream>
 
-const auto getText = Utils::getText;
-const auto getChild = Utils::getChild;
+using std::string;
+
+const auto getTokenType = TreeUtils::getTokenType;
+const auto getText = TreeUtils::getText;
+const auto getChild = TreeUtils::getChild;
+const auto getChildCount = TreeUtils::getChildCount;
 
 int ExprMaster::run(pANTLR3_BASE_TREE root) {
     pANTLR3_COMMON_TOKEN tok = root->getToken(root);
     MasterChain* chain = MasterChain::getInstance(); 
     int res;
     
-    switch (tok->type)
+    switch (getTokenType(root))
     {
     case INT:
     {
@@ -25,66 +29,89 @@ int ExprMaster::run(pANTLR3_BASE_TREE root) {
     case ID:
     {
         string s(getText(root));
-        return vars->find(s);
+        if (!vars->isDefined(s)) {
+            return handle_error("variable '" + s + "' is not defined");
+        }
+        return vars->getVal(s);
     }
 
     case PLUS:
-        return chain->process(getChild(root, 0)) +
-               chain->process(getChild(root, 1));
+        return chain->process(getChild(root, 0), this->vars) +
+               chain->process(getChild(root, 1), this->vars);
 
     case MINUS:
-        return chain->process(getChild(root, 0)) -
-               chain->process(getChild(root, 1));
+        return chain->process(getChild(root, 0), this->vars) -
+               chain->process(getChild(root, 1), this->vars);
 
     case TIMES:
-        return chain->process(getChild(root, 0)) *
-               chain->process(getChild(root, 1));
+        return chain->process(getChild(root, 0), this->vars) *
+               chain->process(getChild(root, 1), this->vars);
 
     case DIV:
     {
-        int den = chain->process(getChild(root, 1));
+        int den = chain->process(getChild(root, 1), this->vars);
         if (den == 0)
         {
-            std::cout << "divide by zero: "
-                      << std::endl;
+            std::cout << "divide by zero: " << std::endl;
             return -1;
         }
 
-        return chain->process(getChild(root, 0)) / den;
+        return chain->process(getChild(root, 0), this->vars) / den;
     }
 
     case ASSIGN:
     {
-        string varname = getText(getChild(root, 0));
-        int &store = vars->find(varname);
-        store = chain->process(getChild(root, 1));
+        string varname( getText(getChild(root, 0)) );
+        if (!vars->isDefined(varname)) {
+            return handle_error("variable '" + varname + "' is not defined");
+        }
+        int &store = vars->getVal(varname);
+        store = chain->process(getChild(root, 1), this->vars);
         return store;
     }
 
     case DEF:
     {
         string varname = getText(getChild(root, 0));
-        if (vars.count(varname))
+        if (vars->isInCurrent(varname))
         {
-            cout << "redefined variable \"" << varname << "\"" << endl;
+            std::cout << "redefined variable \"" << varname << "\"" << std::endl;
             exit(-1);
         }
 
-        if (getChild(root, 1) != nullptr)
+        if (getChildCount(root) > 1)
         {
-            mmap[varname] = eval(getChild(root, 1));
+            res = chain->process(getChild(root, 1), this->vars);
+            vars->addVal(varname, res);
         }
         else
         {
-            mmap[varname] = 0; // by default, initialized with 0
+            // by default, initialized with 0
+            vars->addVal(varname);
+            res = 0;
         }
-        return mmap[varname];
+
+        return res;
     }
 
     default:
-        cout << "unknown handler: "
-             << getText(root) << endl;
-        return -1;
+        return handle_error("unknown handler: " + std::string(getText(root)));
     }
 
+}
+
+IMaster* ExprMaster::ExprFactory::create(Context *ctx) {
+    return new ExprMaster(ctx);
+}
+
+bool ExprMaster::ExprFactory::isValid(pANTLR3_BASE_TREE tree) {
+    int tok = getTokenType(tree);
+    return tok == INT ||
+            tok == ID ||
+            tok == PLUS ||
+            tok == MINUS ||
+            tok == TIMES ||
+            tok == DIV ||
+            tok == ASSIGN ||
+            tok == DEF;
 }

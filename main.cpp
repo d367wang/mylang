@@ -27,8 +27,8 @@ int main(int argc, char** argv) {
     pANTLR3_BASE_TREE tree = r.tree;
 
 
-    ProgramMaster evaluator();
-    evaluator.run(tree);
+    ProgramMaster eval(new Context);
+    eval.run(tree);
     return 0;
 }
 

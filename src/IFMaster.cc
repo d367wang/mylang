@@ -1,19 +1,36 @@
 #include "IFMaster.h"
-#include "Utils.h"
+#include "TreeUtils.h"
+#include "Chain.h"
+#include <iostream>
 
-const auto getText = Utils::getText;
-const auto getChild = Utils::getChild;
+const auto getTokenType = TreeUtils::getTokenType;
+const auto getText = TreeUtils::getText;
+const auto getChild = TreeUtils::getChild;
+const auto getChildCount = TreeUtils::getChildCount;
 
 int IFMaster::run(pANTLR3_BASE_TREE root) {
-    pANTLR3_COMMON_TOKEN tok = root->getToken(root);
-    int res;
+    assert(getTokenType(root) == IF);
 
-    if (tok->type == IF)
-    {
+    int res = MasterChain::getInstance()->process(getChild(root, 0), this->vars);
+    if (res) {
+        // then branch: a statement or a block
+        res = MasterChain::getInstance()->process(getChild(root, 1), this->vars);
 
+    } else if (root->getChildCount(root) == 3) {
+        // else branch exists: a statement or a block
+        res = MasterChain::getInstance()->process(getChild(root, 1), this->vars);
     }
 
-    cout << "unknown handler: "
-         << getText(root) << endl;
-    return -1;
+    // TODO: consider `else if`
+
+    return res;
+}
+
+
+IMaster* IFMaster::IFFactory::create(Context* ctx) {
+    return new IFMaster(ctx);
+}
+
+bool IFMaster::IFFactory::isValid(pANTLR3_BASE_TREE tree) {
+    return getTokenType(tree) == IF;
 }

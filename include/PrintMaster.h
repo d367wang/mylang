@@ -1,26 +1,26 @@
-#ifndef _IFMASTER_H
-#define _IFMASTER_H
+#ifndef _PRINTMASTER_H
+#define _PRINTMASTER_H
 
 #include "base.h"
 
-class IFMaster: public IMaster
+class PrintMaster : public IMaster
 {
 private:
     /* data */
 public:
-    IFMaster(Context* ctx) : IMaster(ctx) {}
+    PrintMaster(Context* ctx) : IMaster(ctx) {}
     int run(pANTLR3_BASE_TREE root);
 
-    class IFFactory : public IFactory
+    class PrintFactory : public IFactory
     {
     private:
         /* data */
     public:
-        IFFactory(IFactory* n) : IFactory(n) {}
+        PrintFactory(IFactory* n) : IFactory(n) {}
 
         IMaster* create(Context*);
         bool isValid(pANTLR3_BASE_TREE);
     };
-    
 };
+
 #endif
