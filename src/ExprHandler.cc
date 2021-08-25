@@ -1,4 +1,4 @@
-#include "ExprMaster.h"
+#include "ExprHandler.h"
 #include "TreeUtils.h"
 #include "Chain.h"
 #include <iostream>
@@ -10,7 +10,7 @@ const auto getText = TreeUtils::getText;
 const auto getChild = TreeUtils::getChild;
 const auto getChildCount = TreeUtils::getChildCount;
 
-int ExprMaster::run(pANTLR3_BASE_TREE root) {
+int ExprHandler::run(pANTLR3_BASE_TREE root) {
     pANTLR3_COMMON_TOKEN tok = root->getToken(root);
     MasterChain* chain = MasterChain::getInstance(); 
     int res;
@@ -82,12 +82,12 @@ int ExprMaster::run(pANTLR3_BASE_TREE root) {
         if (getChildCount(root) > 1)
         {
             res = chain->process(getChild(root, 1), this->vars);
-            vars->addVal(varname, res);
+            vars->addVar(varname, res);
         }
         else
         {
             // by default, initialized with 0
-            vars->addVal(varname);
+            vars->addVar(varname);
             res = 0;
         }
 
@@ -100,11 +100,11 @@ int ExprMaster::run(pANTLR3_BASE_TREE root) {
 
 }
 
-IMaster* ExprMaster::ExprFactory::create(Context *ctx) {
-    return new ExprMaster(ctx);
+IMaster* ExprHandler::ExprFactory::create(Context *ctx) {
+    return new ExprHandler(ctx);
 }
 
-bool ExprMaster::ExprFactory::isValid(pANTLR3_BASE_TREE tree) {
+bool ExprHandler::ExprFactory::isValid(pANTLR3_BASE_TREE tree) {
     int tok = getTokenType(tree);
     return tok == INT ||
             tok == ID ||

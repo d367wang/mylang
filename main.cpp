@@ -1,7 +1,7 @@
 #include "LangLexer.h"
 #include "LangParser.h"
 #include "base.h"
-#include "ProgramMaster.h"
+#include "ProgramHandler.h"
 #include <cassert>
 #include <string>
 #include<iostream>
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     pANTLR3_BASE_TREE tree = r.tree;
 
 
-    ProgramMaster eval(new Context);
+    ProgramHandler eval(new Context);
     eval.run(tree);
     return 0;
 }

@@ -3,23 +3,24 @@
 
 #include <map>
 #include <string>
+#include "types.h"
 
 using std::string;
 using std::map;
 
 class Context {
     Context* next; // outer scope
-    map<string, int> mmap;
+    map<string, IValue> mmap;
 
 public:
     bool isDefined(string key);
     bool isInCurrent(string key);
 
-    void setVal(string key, int val);
-    int& getVal(string key);
+    void setVal(string key, IValue val);
+    IValue& getVal(string key);
 
-    void addVal(string key);
-    void addVal(string key, int val);
+    void addVar(string key);
+    void addVar(string key, IValue val);
 };
 
 

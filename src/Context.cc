@@ -18,7 +18,7 @@ bool Context::isInCurrent(string key) {
 /**
  * caller ensures the input key exists in the current scope or outer ones
  */
-int& Context::getVal(string key) {
+IValue& Context::getVal(string key) {
     if (mmap.count(key)) return mmap[key];
     Context* p = next;
     // traverse the linked list to find the nearest scope that contains the varname
@@ -30,15 +30,15 @@ int& Context::getVal(string key) {
     // igore warning, unreachable
 }
 
-void Context::setVal(string key, int val) {
-    int& target = getVal(key);
+void Context::setVal(string key, IValue val) {
+    IValue& target = getVal(key);
     target = val;
 }
 
-void Context::addVal(string key) {
-    mmap[key] = 0;
+void Context::addVar(string key) {
+    mmap[key] = NULLVAL;
 }
 
-void Context::addVal(string key, int val) {
+void Context::addVar(string key, IValue val) {
     mmap[key] = val;
 }

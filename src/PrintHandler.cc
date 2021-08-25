@@ -1,4 +1,4 @@
-#include "PrintMaster.h"
+#include "PrintHandler.h"
 #include "Chain.h"
 #include "TreeUtils.h"
 
@@ -7,7 +7,7 @@ const auto getText = TreeUtils::getText;
 const auto getChild = TreeUtils::getChild;
 const auto getChildCount = TreeUtils::getChildCount;
 
-int PrintMaster::run(pANTLR3_BASE_TREE root) {
+int PrintHandler::run(pANTLR3_BASE_TREE root) {
     pANTLR3_COMMON_TOKEN tok = root->getToken(root);
     int res = -1;
 
@@ -19,10 +19,10 @@ int PrintMaster::run(pANTLR3_BASE_TREE root) {
     return handle_error("unknown handler: " + std::string(getText(root)));
 }
 
-IMaster* PrintMaster::PrintFactory::create(Context* ctx) {
-    return new PrintMaster(ctx);
+IMaster* PrintHandler::PrintFactory::create(Context* ctx) {
+    return new PrintHandler(ctx);
 }
 
-bool PrintMaster::PrintFactory::isValid(pANTLR3_BASE_TREE tree) {
+bool PrintHandler::PrintFactory::isValid(pANTLR3_BASE_TREE tree) {
     return getTokenType(tree) == PRINT;
 }

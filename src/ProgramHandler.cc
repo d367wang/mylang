@@ -1,4 +1,4 @@
-#include "ProgramMaster.h"
+#include "ProgramHandler.h"
 #include "Chain.h"
 #include "TreeUtils.h"
 #include <iostream>
@@ -10,7 +10,7 @@ const auto getText = TreeUtils::getText;
 const auto getChild = TreeUtils::getChild;
 const auto getChildCount = TreeUtils::getChildCount;
 
-int ProgramMaster::run(pANTLR3_BASE_TREE root) {
+int ProgramHandler::run(pANTLR3_BASE_TREE root) {
     pANTLR3_COMMON_TOKEN tok = root->getToken(root);
     int res;
 
@@ -48,10 +48,10 @@ int ProgramMaster::run(pANTLR3_BASE_TREE root) {
 }
 
 
-IMaster* ProgramMaster::ProgramFactory::create(Context *ctx) {
-    return new ProgramMaster(ctx);
+IMaster* ProgramHandler::ProgramFactory::create(Context *ctx) {
+    return new ProgramHandler(ctx);
 }
 
-bool ProgramMaster::ProgramFactory::isValid(pANTLR3_BASE_TREE tree) {
+bool ProgramHandler::ProgramFactory::isValid(pANTLR3_BASE_TREE tree) {
     return getTokenType(tree) == BLOCK;
 }
