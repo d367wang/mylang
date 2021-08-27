@@ -5,6 +5,7 @@
 #include "LangParser.h"
 #include "Context.h"
 #include <iostream>
+#include <tree/ast.h>
 
 class IMaster {
 protected: 
@@ -13,11 +14,9 @@ public:
     IMaster(Context *v) : vars(v) {}
     virtual ~IMaster() {}
 
-    virtual int run(pANTLR3_BASE_TREE root) = 0;
-    virtual int handle_error(string msg) { 
-        // TODO: a better way to report error and terminate
-        std::cout << msg << std::endl;
-        exit(1);
+    virtual IValue run(IAST* root) = 0;
+    virtual void handle_error(string msg) {
+        throw std::runtime_error(msg);
     }
 };
 

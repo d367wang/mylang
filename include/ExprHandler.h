@@ -9,7 +9,7 @@ private:
     /* data */
 public:
     ExprHandler(Context* ctx) : IMaster(ctx) {}
-    int run(pANTLR3_BASE_TREE root);
+    IValue run(IAST* root);
 
     class ExprFactory : public IFactory
     {

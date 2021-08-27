@@ -7,7 +7,7 @@ const auto getText = TreeUtils::getText;
 const auto getChild = TreeUtils::getChild;
 const auto getChildCount = TreeUtils::getChildCount;
 
-int PrintHandler::run(pANTLR3_BASE_TREE root) {
+IValue PrintHandler::run(IAST* root) {
     pANTLR3_COMMON_TOKEN tok = root->getToken(root);
     int res = -1;
 

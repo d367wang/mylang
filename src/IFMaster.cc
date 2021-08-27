@@ -8,7 +8,7 @@ const auto getText = TreeUtils::getText;
 const auto getChild = TreeUtils::getChild;
 const auto getChildCount = TreeUtils::getChildCount;
 
-int IfHandler::run(pANTLR3_BASE_TREE root) {
+IValue IfHandler::run(IAST* root) {
     assert(getTokenType(root) == IF);
 
     int res = MasterChain::getInstance()->process(getChild(root, 0), this->vars);

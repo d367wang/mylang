@@ -9,7 +9,7 @@ private:
     /* data */
 public:
     PrintHandler(Context* ctx) : IMaster(ctx) {}
-    int run(pANTLR3_BASE_TREE root);
+    IValue run(IAST* root)
 
     class PrintFactory : public IFactory
     {

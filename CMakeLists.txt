@@ -7,4 +7,4 @@ file(GLOB SOURCES src/*.cpp)
 include_directories(include 3rdparty/ 3rdparty/include)
 
 add_executable(main ${SOURCES} main.cpp)
-target_link_libraries(main 3rdparty/libs/*.a)
+target_link_libraries(main 3rdparty/libs/libantlr3c.a)

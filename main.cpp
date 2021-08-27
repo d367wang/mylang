@@ -7,13 +7,15 @@
 #include<iostream>
 #include <tree/ast.h>
 #include <tree/AntlrASTWrapper.h>
+#include <tree/CustomAST.h>
+#include <CustomLexer.h>
 
 using std::string;
 using std::cout;
 using std::endl;
 using std::map;
 
-IAST* genAstAntlr(char* filename) {
+AntlrASTWrapper* genAstAntlr(char* filename) {
     pANTLR3_INPUT_STREAM input = antlr3FileStreamNew((pANTLR3_UINT8)filename, ANTLR3_ENC_8BIT);
 
     pLangLexer lex = LangLexerNew(input);
@@ -27,9 +29,9 @@ IAST* genAstAntlr(char* filename) {
     return new AntlrASTWrapper(r.tree);
 }
 
-IAST* genCustomAST(char* filename) {
-
-}
+//CustomAST* genCustomAST(char* filename) {
+//    new CustomLexer(filename);
+//}
 
 int main(int argc, char** argv) {
     assert(argc > 1);
@@ -37,6 +39,7 @@ int main(int argc, char** argv) {
     IAST* root = genAstAntlr(argv[1]);
     ProgramHandler eval(new Context);
     eval.run(root);
+
 
     return 0;
 }

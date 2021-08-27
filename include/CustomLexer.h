@@ -5,9 +5,13 @@
 #ifndef ECHO_CUSTOMLEXER_H
 #define ECHO_CUSTOMLEXER_H
 
+#include <fstream>
 
 class CustomLexer {
-
+    const char* filename;
+public:
+    CustomLexer(const char* filename) : filename(filename) {}
+    int next();
 };
 
 

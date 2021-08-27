@@ -6,7 +6,7 @@
 #define ECHO_ANTLRASTWRAPPER_H
 
 
-class AntlrASTWrapper {
+class AntlrASTWrapper : public IAST {
     pANTLR3_BASE_TREE tree;
 public:
     AntlrASTWrapper(pANTLR3_BASE_TREE t) : tree(t) {}

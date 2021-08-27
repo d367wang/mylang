@@ -7,14 +7,14 @@ MasterChain* MasterChain::getInstance() {
 }
 
 
-int MasterChain::process(pANTLR3_BASE_TREE tree, Context* ctx) {
+IValue MasterChain::process(pANTLR3_BASE_TREE tree, Context* ctx) {
     IFactory* pf = headF;
 
     while (pf != nullptr)
     {
         if (pf->isValid(tree)) {
             IMaster* master = pf->create(ctx);
-            int res = master->run(tree);
+            IValue* res = master->run(tree);
             delete master;
             return res;
         }

@@ -5,8 +5,6 @@ class IValue {
 public:
     IValue() {}
     virtual ~IValue() {}
-
-
 };
 
 class IntValue : public IValue
@@ -14,32 +12,16 @@ class IntValue : public IValue
 private:
     int val;
 public:
-    IntValue(/* args */);
-    IntValue& operator=(const IntValue& other) {}
+    IntValue(int val) : val(val) {}
 };
-
-IntValue::IntValue(/* args */)
-{
-}
-
 
 class StringValue : public IValue
 {
 private:
-    /* data */
+    std::string val;
 public:
-    StringValue(/* args */);
-    ~StringValue();
+    StringValue(const char* str) : val(str) {}
 };
-
-StringValue::StringValue(/* args */)
-{
-}
-
-StringValue::~StringValue()
-{
-}
-
 
 
 class NullValue
