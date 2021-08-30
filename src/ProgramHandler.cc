@@ -24,7 +24,7 @@ shared_ptr<IValue> ProgramHandler::run(IAST* root) {
         }
         case BLOCK:
         {
-            std::unique_ptr<Context> newCtx = std::make_unique<Context>();
+            std::unique_ptr<Context> newCtx; // make_unique is not supported until 14
 
             int cnt = root->getChildCount();
             for (int i = 0; i < cnt; i++)
@@ -35,13 +35,13 @@ shared_ptr<IValue> ProgramHandler::run(IAST* root) {
         }
 
         default:
-            handle_error("unknown handler: " + std::string(root->getText()));
+            throw std::runtime_error("unknown handler: " + std::string(root->getText()));
     }
 
 }
 
 
-IMaster* ProgramHandler::ProgramFactory::create(Context *ctx) {
+IMaster* ProgramHandler::ProgramFactory::create(shared_ptr<Context> ctx) {
     return new ProgramHandler(ctx);
 }
 

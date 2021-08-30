@@ -1,21 +1,18 @@
-//
-// Created by d367wang on 2021-08-25.
-//
-
-#ifndef ECHO_ANTLRASTWRAPPER_H
-#define ECHO_ANTLRASTWRAPPER_H
+#ifndef _ANTLRASTWRAPPER_H
+#define _ANTLRASTWRAPPER_H
 
 #include "ast.h"
 
 class AntlrASTWrapper : public IAST {
     pANTLR3_BASE_TREE tree;
 public:
-    AntlrASTWrapper(pANTLR3_BASE_TREE t) : tree(t) {}
-    int getTokenType();
-    const std::string getText();
-    IAST* getChild(unsigned int i);
-    int getChildCount();
+    explicit AntlrASTWrapper(pANTLR3_BASE_TREE t) : tree(t) {}
+    ~AntlrASTWrapper() = default;
+
+    int getTokenType() override;
+    const std::string getText() override;
+    IAST* getChild(uint32_t i) override;
+    int getChildCount() override;
 };
 
-
-#endif //ECHO_ANTLRASTWRAPPER_H
+#endif

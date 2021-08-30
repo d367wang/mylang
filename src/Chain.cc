@@ -9,7 +9,7 @@ namespace MYLANG {
     }
 
 
-    std::shared_ptr<IValue> MasterChain::process(IAST *tree, Context *ctx) {
+    std::shared_ptr<IValue> MasterChain::process(IAST *tree, shared_ptr<Context> ctx) {
         IFactory *pf = headF;
 
         while (pf != nullptr) {

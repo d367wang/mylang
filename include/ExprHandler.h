@@ -9,7 +9,7 @@ namespace MYLANG {
     private:
         /* data */
     public:
-        ExprHandler(Context *ctx) : IMaster(ctx) {}
+        ExprHandler(shared_ptr<Context> ctx) : IMaster(ctx) {}
 
         std::shared_ptr<IValue> run(IAST *root);
 
@@ -19,7 +19,7 @@ namespace MYLANG {
         public:
             ExprFactory(IFactory *n) : IFactory(n) {}
 
-            IMaster *create(Context *ctx);
+            IMaster *create(shared_ptr<Context> ctx);
 
             bool isValid(IAST *tree);
         };

@@ -1,8 +1,4 @@
-//
-// Created by d367wang on 2021-08-25.
-//
-
-#include "tree/CustomAST.h"
+#include "CustomAST.h"
 
 int CustomAST::getTokenType() {
 

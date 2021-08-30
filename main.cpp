@@ -11,9 +11,9 @@
 #include <CustomLexer.h>
 
 using std::string;
-using std::cout;
-using std::endl;
 using std::map;
+using MYLANG::ProgramHandler;
+using MYLANG::Context;
 
 AntlrASTWrapper* genAstAntlr(char* filename) {
     pANTLR3_INPUT_STREAM input = antlr3FileStreamNew((pANTLR3_UINT8)filename, ANTLR3_ENC_8BIT);

@@ -8,7 +8,7 @@ namespace MYLANG {
     private:
         /* data */
     public:
-        ProgramHandler(Context *ctx) : IMaster(ctx) {}
+        ProgramHandler(shared_ptr<Context> ctx) : IMaster(ctx) {}
 
         shared_ptr<IValue> run(IAST *root);
 
@@ -18,7 +18,7 @@ namespace MYLANG {
         public:
             ProgramFactory(IFactory *n) : IFactory(n) {}
 
-            IMaster *create(Context *ctx);
+            IMaster *create(shared_ptr<Context> ctx);
 
             bool isValid(IAST *tree);
         };

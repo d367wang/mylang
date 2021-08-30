@@ -1,9 +1,5 @@
-//
-// Created by d367wang on 2021-08-25.
-//
-
-#ifndef ECHO_CUSTOMLEXER_H
-#define ECHO_CUSTOMLEXER_H
+#ifndef _CUSTOMLEXER_H
+#define _CUSTOMLEXER_H
 
 #include <fstream>
 

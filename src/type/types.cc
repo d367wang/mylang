@@ -8,8 +8,27 @@ namespace MYLANG {
     static const std::shared_ptr<IValue> pFalseVal(new IntValue(0));
     static const std::shared_ptr<IValue> pFalseVal(new StringValue(""));
 
-    bool IntValue::cmpOp(IValue* other, int type) {
 
+/**************************  Base ******************************/
+//    shared_ptr<IValue> IValue::binOp(shared_ptr<IValue> other, int type) {
+//        if (type == PLUS || type == MINUS || type == TIMES || type == DIV)
+//            return this->arithOp(other, type);
+//        else
+//            return this->cmpOp(other, type);
+//    }
+
+
+/**************************  Int ******************************/
+    static int reverse(int type) {
+        switch (type) {
+            case EQ: return EQ;
+            case NE: return NE;
+            case GT: return LE;
+            case GE: return LT;
+            case LT: return GE;
+            case LE: return GT;
+            default: throw std::runtime_error("cperator not supported");
+        }
     }
 
     shared_ptr<IValue> IntValue::arithOp(shared_ptr<IValue> other, int type) {
@@ -37,7 +56,24 @@ namespace MYLANG {
         return tmp;
     }
 
+    shared_ptr<IValue> IntValue::cmpOp(shared_ptr<IValue> other, int type) {
+        if (getType() < other->getType()) {
+            return other->cmpOp(this, reverse(type));
+        }
 
+        static ToIntVisitor visitor;
+        shared_ptr<IntValue> tmp = other->accept(&visitor);
+        switch (type) {
+            case EQ:
+                return tmp->getValue() == getValue() ? pTrueVal : pFalseVal;
+            case GT:
+                return tmp->getValue() > getValue() ? pTrueVal : pFalseVal;
+            default: throw std::runtime_error("cperator not supported");
+        }
+    }
+
+
+/*********************  Double ******************************/
     shared_ptr<IValue> DoubleValue::arithOp(shared_ptr<IValue> other, int type) {
         static ToDoubleVisitor visitor;
 
@@ -62,6 +98,25 @@ namespace MYLANG {
         }
         return tmp;
     }
+
+    shared_ptr<IValue> DoubleValue::cmpOp(shared_ptr<IValue> other, int type) {
+        if (getType() < other->getType()) {
+            return other->cmpOp(this, reverse(type));
+        }
+
+        static ToDoubleVisitor visitor;
+        shared_ptr<DoubleValue> tmp = other->accept(&visitor);
+        switch (type) {
+            case EQ:
+                return tmp->getValue() == getValue() ? pTrueVal : pFalseVal;
+            case GT:
+                return tmp->getValue() > getValue() ? pTrueVal : pFalseVal;
+            default: throw std::runtime_error("cperator not supported");
+        }
+    }
+
+
+/**************************  String ******************************/
 
     shared_ptr<IValue> StringValue::arithOp(shared_ptr<IValue> other, int type) {
         static ToDoubleVisitor visitor;
@@ -92,7 +147,30 @@ namespace MYLANG {
                     tmp->setValue(tmp->getValue() + getValue()); // append this string to temporary, n - 1 times
                 }
                 break;
+            default:
+                throw std::runtime_error("unexpected operator");
         }
         return tmp;
+    }
+
+    shared_ptr<IValue> StringValue::cmpOp(shared_ptr<IValue> other, int type) {
+        static ToStringVisitor visitor;
+        shared_ptr<StringValue> tmp = other->accept(&visitor);
+        switch (type) {
+            case EQ:
+                return tmp->getValue() == getValue() ? pTrueVal : pFalseVal;
+            case GT:
+                return tmp->getValue() > getValue() ? pTrueVal : pFalseVal;
+            default: throw std::runtime_error("cperator not supported");
+        }
+
+    }
+
+    shared_ptr<IValue> IValue::binOp(shared_ptr<IValue> other, int type) {
+        if (type == PLUS || type == MINUS || type == TIMES || type == DIV)
+            return this->arithOp(other, type);
+        else
+            return this->cmpOp(other, type)
+        return shared_ptr<IValue>();
     }
 }

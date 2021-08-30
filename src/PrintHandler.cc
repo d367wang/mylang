@@ -15,7 +15,7 @@ namespace MYLANG {
         handle_error("unknown handler: " + std::string(root->getText()));
     }
 
-    IMaster *PrintHandler::PrintFactory::create(Context *ctx) {
+    IMaster *PrintHandler::PrintFactory::create(shared_ptr<Context> ctx) {
         return new PrintHandler(ctx);
     }
 

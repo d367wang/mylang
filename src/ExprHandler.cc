@@ -1,5 +1,4 @@
 #include "ExprHandler.h"
-#include "TreeUtils.h"
 #include "Chain.h"
 #include <string>
 
@@ -50,13 +49,21 @@ namespace MYLANG {
             case MINUS:
             case TIMES:
             case DIV:
+            case EQ:
+            case NE:
+            case GT:
+            case GE:
+            case LT:
+            case LE: {
                 shared_ptr<IValue> lop = chain->process(root->getChild(0), this->vars);
                 shared_ptr<IValue> rop = chain->process(root->getChild(1), this->vars);
-                bin_op(lop, rop, root->getTokenType());
+                lop->binOp(rop, root->getTokenType());
+            } break;
+
             case ASSIGN: {
                 string varname(root->getChild(0)->getText());
                 if (!vars->isDefined(varname)) {
-                    handle_error("variable '" + varname + "' is not defined");
+                    throw std::runtime_error("variable '" + varname + "' is not defined");
                 }
                 res = chain->process(root->getChild(1), this->vars);
                 vars->setVal(varname, res);
@@ -64,12 +71,12 @@ namespace MYLANG {
             }
 
             default:
-                handle_error("unknown handler: " + std::string(root->getText()));
+                throw std::runtime_error("unknown handler: " + std::string(root->getText()));
         }
 
     }
 
-    IMaster *ExprHandler::ExprFactory::create(Context *ctx) {
+    IMaster *ExprHandler::ExprFactory::create(shared_ptr<Context> ctx) {
         return new ExprHandler(ctx);
     }
 

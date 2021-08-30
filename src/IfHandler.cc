@@ -24,7 +24,7 @@ namespace MYLANG {
     }
 
 
-    IMaster *IfHandler::IFFactory::create(Context *ctx) {
+    IMaster *IfHandler::IFFactory::create(shared_ptr<Context> ctx) {
         return new IfHandler(ctx);
     }
 

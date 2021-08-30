@@ -1,7 +1,3 @@
-//
-// Created by d367wang on 2021-08-25.
-//
-
 #include "AntlrASTWrapper.h"
 #include <cassert>
 
@@ -11,7 +7,7 @@ int AntlrASTWrapper::getTokenType() {
     return -1;
 }
 
-IAST* AntlrASTWrapper::getChild(unsigned int i) {
+IAST* AntlrASTWrapper::getChild(uint32_t i) {
     assert(i < tree->getChildCount(tree));
     return tree->getChild(tree, i);
 }

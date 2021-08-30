@@ -23,7 +23,7 @@ namespace MYLANG {
     public:
         static MasterChain *getInstance();
 
-        std::shared_ptr<IValue> process(IAST *, Context *ctx);
+        std::shared_ptr<IValue> process(IAST *, shared_ptr<Context> ctx);
     };
 
 }

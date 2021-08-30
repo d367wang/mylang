@@ -58,7 +58,7 @@ condition_expr: andExpr (OR^ andExpr)*
     ;
 andExpr: cmp_atom (AND^ cmp_atom)*
     ;
-cmp_atom: cond_atom ((GT^ | LITTLE^ | EQ^ | GE^ | LE^ | NE^) cond_atom)?
+cmp_atom: cond_atom ((GT^ | LT^ | EQ^ | GE^ | LE^ | NE^) cond_atom)?
     ;
 cond_atom
     : expr
@@ -99,7 +99,7 @@ OR: '||';
 AND: '&&';
 GE: '>=' | '=>';
 NE: '!=';
-LITTLE: '<';
+LT: '<';
 LE: '<=' | '=<';
 GT: '>';
 EQ: '==';

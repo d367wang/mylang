@@ -4,16 +4,19 @@
 #include "LangLexer.h"
 #include "LangParser.h"
 #include "Context.h"
-#include <iostream>
-#include <tree/ast.h>
+#include "ast.h"
+#include "types.h"
+#include <memory>
+
+using std::shared_ptr;
 
 namespace MYLANG {
 
     class IMaster {
     protected:
-        Context *vars;
+        shared_ptr<Context> vars;
     public:
-        IMaster(Context *v) : vars(v) {}
+        IMaster(shared<Context> v) : vars(v) {}
 
         virtual ~IMaster() {}
 
@@ -29,7 +32,7 @@ namespace MYLANG {
     public:
         IFactory(IFactory *n) : next(n) {}
 
-        virtual IMaster *create(Context *) = 0;
+        virtual IMaster *create(shared_ptr<Context>) = 0;
 
         virtual bool isValid(IAST *) = 0;
 

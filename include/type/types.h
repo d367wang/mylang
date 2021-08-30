@@ -4,6 +4,7 @@
 #include <string>
 #include <stdexcept>
 #include <utility>
+#include "base.h"
 
 using std::shared_ptr;
 using std::string;
@@ -11,7 +12,7 @@ using std::string;
 namespace MYLANG {
 
     enum ValueType {
-        BOOL, INT32, DOUBLE, STR
+        INT32, DOUBLE, STR
     };
 
     class IntValue;
@@ -33,10 +34,11 @@ namespace MYLANG {
         virtual ValueType getType() = 0;
         virtual shared_ptr<IValue> accept(IVisitor* visitor) = 0;
 
-        virtual bool cmpOp(IValue*, int type) = 0;
-        virtual std::shared_ptr<IValue> arithOp(IValue* other, int type) = 0;
+        shared_ptr<IValue> binOp(shared_ptr<IValue> other, int type);
+        virtual shared_ptr<IValue> cmpOp(shared_ptr<IValue>, int type) = 0;
+        virtual shared_ptr<IValue> arithOp(shared_ptr<IValue> other, int type) = 0;
 
-        static const std::shared_ptr<IValue> pTrueVal, pFalseVal, pNullVal;
+        static const shared_ptr<IValue> pTrueVal, pFalseVal, pNullVal;
     };
 
     class IntValue : public IValue {
@@ -44,13 +46,14 @@ namespace MYLANG {
         int val;
     public:
         explicit IntValue(int val) : val(val) {}
+        ~IntValue() {}
 
         int getValue() const { return val; }
         void setValue(int v) { val = v; }
-        ValueType getType() const { return INT32; }
+        ValueType getType() { return INT32; }
         shared_ptr<IValue> accept(IVisitor* visitor) {return visitor->visitInt(this);};
 
-        bool cmpOp(IValue*, int type);
+        shared_ptr<IValue> cmpOp(shared_ptr<IValue> other, int type);
         shared_ptr<IValue> arithOp(shared_ptr<IValue> other, int type);
     };
 
@@ -60,12 +63,13 @@ namespace MYLANG {
         double val;
     public:
         explicit DoubleValue(int val) : val(val) {}
+        ~DoubleValue() = default;
 
         double getValue() const { return val; }
-        ValueType getType() const { return DOUBLE; }
+        ValueType getType() { return DOUBLE; }
         shared_ptr<IValue> accept(IVisitor* visitor) {return visitor->visitDouble(this);};
 
-        bool cmpOp(IValue*, int type);
+        shared_ptr<IValue> cmpOp(shared_ptr<IValue> other, int type);
         shared_ptr<IValue> arithOp(shared_ptr<IValue> other, int type);
     };
 
@@ -76,18 +80,16 @@ namespace MYLANG {
     public:
         explicit StringValue(const char *str) : val(str) {}
         explicit StringValue(string  str) : val(std::move(str)) {}
-
-        explicit StringValue(string &&str) {
-            val = std::move(str);
-        }
+        explicit StringValue(string &&str) : val(std::move(str)) {}
+        ~StringValue() {}
 
         const string &getValue() const { return val; }
         void setValue(string&& str) { val = std::move(str); }
-        ValueType getType() const { return STR; }
+        ValueType getType() { return STR; }
         shared_ptr<IValue> accept(IVisitor* visitor) {return visitor->visitString(this);};
 
 
-        bool cmpOp(IValue*, int type);
+        shared_ptr<IValue> cmpOp(shared_ptr<IValue> other, int type);
         shared_ptr<IValue> arithOp(shared_ptr<IValue> other, int type);
     };
 
