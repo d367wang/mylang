@@ -5,14 +5,15 @@
 #ifndef ECHO_ANTLRASTWRAPPER_H
 #define ECHO_ANTLRASTWRAPPER_H
 
+#include "ast.h"
 
 class AntlrASTWrapper : public IAST {
     pANTLR3_BASE_TREE tree;
 public:
     AntlrASTWrapper(pANTLR3_BASE_TREE t) : tree(t) {}
     int getTokenType();
-    std::string getText();
-    IAST* getChild();
+    const std::string getText();
+    IAST* getChild(unsigned int i);
     int getChildCount();
 };
 

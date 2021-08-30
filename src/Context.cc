@@ -1,44 +1,49 @@
 #include "Context.h"
 #include <cassert>
 
-bool Context::isDefined(string key) {
-    if (mmap.count(key)) return 1;
-    Context* p = next;
-    while (p != nullptr) {
+namespace MYLANG {
+
+    bool Context::isDefined(string key) {
         if (mmap.count(key)) return 1;
+        Context *p = next;
+        while (p != nullptr) {
+            if (mmap.count(key)) return 1;
+        }
+        return 0;
     }
-    return 0;
-}
 
-bool Context::isInCurrent(string key) {
-    return mmap.count(key);
-}
-
+    bool Context::isInCurrent(string key) {
+        return mmap.count(key);
+    }
 
 /**
  * caller ensures the input key exists in the current scope or outer ones
  */
-IValue& Context::getVal(string key) {
-    if (mmap.count(key)) return mmap[key];
-    Context* p = next;
-    // traverse the linked list to find the nearest scope that contains the varname
-    while (p != nullptr) {
-        if (p->mmap.count(key)) return p->mmap[key];
+    shared_ptr<IValue> Context::getVal(string key) {
+        if (mmap.count(key)) return mmap[key];
+        Context *p = next;
+        // traverse the linked list to find the nearest scope that contains the varname
+        while (p != nullptr) {
+            if (p->mmap.count(key)) return p->mmap[key];
+        }
+        return nullptr;
     }
 
-    assert(p != nullptr);
-    // igore warning, unreachable
-}
+    void Context::setVal(string key, shared_ptr<IValue> val) {
+        mmap[key] = val;
+    }
 
-void Context::setVal(string key, IValue val) {
-    IValue& target = getVal(key);
-    target = val;
-}
+/**
+ * Add uninitialized declared variable to the runtime context
+ * the value for uninitialized variable in the map is null pointer
+ * @param key
+ */
+    void Context::addVar(string key) {
+        mmap[key] = nullptr;
+    }
 
-void Context::addVar(string key) {
-    mmap[key] = NULLVAL;
-}
+    void Context::addVar(string key, shared_ptr<IValue> val) {
+        mmap[key] = val;
+    }
 
-void Context::addVar(string key, IValue val) {
-    mmap[key] = val;
 }

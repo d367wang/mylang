@@ -3,34 +3,34 @@
 #include "Chain.h"
 #include <iostream>
 
-const auto getTokenType = TreeUtils::getTokenType;
-const auto getText = TreeUtils::getText;
-const auto getChild = TreeUtils::getChild;
-const auto getChildCount = TreeUtils::getChildCount;
+namespace MYLANG {
 
-IValue IfHandler::run(IAST* root) {
-    assert(getTokenType(root) == IF);
+    shared_ptr<IValue> IfHandler::run(IAST *root) {
+        assert(root->getTokenType() == IF);
 
-    int res = MasterChain::getInstance()->process(getChild(root, 0), this->vars);
-    if (res) {
-        // then branch: a statement or a block
-        res = MasterChain::getInstance()->process(getChild(root, 1), this->vars);
+        shared_ptr<IValue> res = MasterChain::getInstance()->process(root->getChild(0), this->vars);
+        if (res) {
+            // then branch: a statement or a block
+            res = MasterChain::getInstance()->process(root->getChild(1), this->vars);
 
-    } else if (root->getChildCount(root) == 3) {
-        // else branch exists: a statement or a block
-        res = MasterChain::getInstance()->process(getChild(root, 1), this->vars);
+        } else if (root->getChildCount() == 3) {
+            // else branch exists: a statement or a block
+            res = MasterChain::getInstance()->process(root->getChild(1), this->vars);
+        }
+
+        // TODO: consider `else if`
+
+        return res;
     }
 
-    // TODO: consider `else if`
 
-    return res;
-}
+    IMaster *IfHandler::IFFactory::create(Context *ctx) {
+        return new IfHandler(ctx);
+    }
+
+    bool IfHandler::IFFactory::isValid(IAST *tree) {
+        return tree->getTokenType() == IF;
+    }
 
 
-IMaster* IfHandler::IFFactory::create(Context* ctx) {
-    return new IfHandler(ctx);
-}
-
-bool IfHandler::IFFactory::isValid(pANTLR3_BASE_TREE tree) {
-    return getTokenType(tree) == IF;
 }

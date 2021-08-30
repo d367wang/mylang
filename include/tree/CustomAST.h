@@ -10,7 +10,7 @@ class CustomAST {
 public:
     int getTokenType();
     std::string getText();
-    IAST* getChild();
+    IAST* getChild(unsigned int i);
     int getChildCount();
 };
 

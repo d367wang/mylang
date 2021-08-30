@@ -1,117 +1,90 @@
 #include "ExprHandler.h"
 #include "TreeUtils.h"
 #include "Chain.h"
-#include <iostream>
+#include <string>
 
 using std::string;
+using std::shared_ptr;
 
-const auto getTokenType = TreeUtils::getTokenType;
-const auto getText = TreeUtils::getText;
-const auto getChild = TreeUtils::getChild;
-const auto getChildCount = TreeUtils::getChildCount;
+namespace MYLANG {
 
-IValue ExprHandler::run(IAST* root) {
-    pANTLR3_COMMON_TOKEN tok = root->getToken(root);
-    MasterChain* chain = MasterChain::getInstance(); 
-    int res;
-    
-    switch (getTokenType(root))
-    {
-    case INT:
-    {
-        const char *str = getText(root);
-        if (str[0] == '-')
-            return -atoi(getText(root));
-        else
-            return atoi(getText(root));
-    }
+    shared_ptr<IValue> ExprHandler::run(IAST *root) {
+        MasterChain *chain = MasterChain::getInstance();
+        shared_ptr<IValue> res;
 
-    case ID:
-    {
-        string s(getText(root));
-        if (!vars->isDefined(s)) {
-            return handle_error("variable '" + s + "' is not defined");
-        }
-        return vars->getVal(s);
-    }
+        switch (root->getTokenType()) {
+            case INT: {
+                const string &str = root->getText();
+                return std::make_shared<IntValue>(std::stoi(root->getText()));
+            }
 
-    case PLUS:
-        return chain->process(getChild(root, 0), this->vars) +
-               chain->process(getChild(root, 1), this->vars);
+            case ID: {
+                string s(root->getText());
+                if (!vars->isDefined(s)) {
+                    handle_error("variable '" + s + "' is not defined");
+                }
+                return vars->getVal(s);
+            }
 
-    case MINUS:
-        return chain->process(getChild(root, 0), this->vars) -
-               chain->process(getChild(root, 1), this->vars);
+            case DEF: {
+                string varname = root->getChild(0)->getText();
+                if (vars->isInCurrent(varname)) {
+                    std::cout << "redefined variable \"" << varname << "\"" << std::endl;
+                    exit(-1);
+                }
 
-    case TIMES:
-        return chain->process(getChild(root, 0), this->vars) *
-               chain->process(getChild(root, 1), this->vars);
+                if (root->getChildCount() > 1) {
+                    res = chain->process(root->getChild(1), this->vars);
+                    vars->addVar(varname, res);
+                } else {
+                    // by default, initialized with 0
+                    vars->addVar(varname);
+                    res = 0;
+                }
 
-    case DIV:
-    {
-        int den = chain->process(getChild(root, 1), this->vars);
-        if (den == 0)
-        {
-            std::cout << "divide by zero: " << std::endl;
-            return -1;
-        }
+                return res;
+            }
 
-        return chain->process(getChild(root, 0), this->vars) / den;
-    }
+            // arithmetic binary operation
+            case PLUS:
+            case MINUS:
+            case TIMES:
+            case DIV:
+                shared_ptr<IValue> lop = chain->process(root->getChild(0), this->vars);
+                shared_ptr<IValue> rop = chain->process(root->getChild(1), this->vars);
+                bin_op(lop, rop, root->getTokenType());
+            case ASSIGN: {
+                string varname(root->getChild(0)->getText());
+                if (!vars->isDefined(varname)) {
+                    handle_error("variable '" + varname + "' is not defined");
+                }
+                res = chain->process(root->getChild(1), this->vars);
+                vars->setVal(varname, res);
+                return res;
+            }
 
-    case ASSIGN:
-    {
-        string varname( getText(getChild(root, 0)) );
-        if (!vars->isDefined(varname)) {
-            return handle_error("variable '" + varname + "' is not defined");
-        }
-        int &store = vars->getVal(varname);
-        store = chain->process(getChild(root, 1), this->vars);
-        return store;
-    }
-
-    case DEF:
-    {
-        string varname = getText(getChild(root, 0));
-        if (vars->isInCurrent(varname))
-        {
-            std::cout << "redefined variable \"" << varname << "\"" << std::endl;
-            exit(-1);
+            default:
+                handle_error("unknown handler: " + std::string(root->getText()));
         }
 
-        if (getChildCount(root) > 1)
-        {
-            res = chain->process(getChild(root, 1), this->vars);
-            vars->addVar(varname, res);
-        }
-        else
-        {
-            // by default, initialized with 0
-            vars->addVar(varname);
-            res = 0;
-        }
-
-        return res;
     }
 
-    default:
-        return handle_error("unknown handler: " + std::string(getText(root)));
+    IMaster *ExprHandler::ExprFactory::create(Context *ctx) {
+        return new ExprHandler(ctx);
     }
 
-}
+    bool ExprHandler::ExprFactory::isValid(IAST *tree) {
+        int tok = tree->getTokenType();
+        return tok == INT ||
+               tok == ID ||
+               tok == PLUS ||
+               tok == MINUS ||
+               tok == TIMES ||
+               tok == DIV ||
+               tok == ASSIGN ||
+               tok == DEF;
+    }
 
-IMaster* ExprHandler::ExprFactory::create(Context *ctx) {
-    return new ExprHandler(ctx);
-}
 
-bool ExprHandler::ExprFactory::isValid(pANTLR3_BASE_TREE tree) {
-    int tok = getTokenType(tree);
-    return tok == INT ||
-            tok == ID ||
-            tok == PLUS ||
-            tok == MINUS ||
-            tok == TIMES ||
-            tok == DIV ||
-            tok == ASSIGN ||
-            tok == DEF;
+
 }

@@ -12,7 +12,7 @@ std::string CustomAST::getText() {
 
 }
 
-IAST* CustomAST::getChild() {
+IAST* CustomAST::getChild(unsigned int i) {
 
 }
 

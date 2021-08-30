@@ -3,25 +3,27 @@
 
 #include "base.h"
 
-class ExprHandler : public IMaster
-{
-private:
-    /* data */
-public:
-    ExprHandler(Context* ctx) : IMaster(ctx) {}
-    IValue run(IAST* root);
+namespace MYLANG {
 
-    class ExprFactory : public IFactory
-    {
+    class ExprHandler : public IMaster {
     private:
         /* data */
     public:
-        ExprFactory(IFactory* n) : IFactory(n) {}
+        ExprHandler(Context *ctx) : IMaster(ctx) {}
 
-        IMaster* create(Context* ctx);
-        bool isValid(pANTLR3_BASE_TREE tree);
+        std::shared_ptr<IValue> run(IAST *root);
+
+        class ExprFactory : public IFactory {
+        private:
+            /* data */
+        public:
+            ExprFactory(IFactory *n) : IFactory(n) {}
+
+            IMaster *create(Context *ctx);
+
+            bool isValid(IAST *tree);
+        };
+
     };
-    
-};
-
+}
 #endif

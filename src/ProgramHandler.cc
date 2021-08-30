@@ -1,48 +1,41 @@
 #include "ProgramHandler.h"
 #include "Chain.h"
-#include "TreeUtils.h"
 #include <iostream>
 #include <memory>
+#include "ast.h"
 
+namespace MYLANG {
 
-const auto getTokenType = TreeUtils::getTokenType;
-const auto getText = TreeUtils::getText;
-const auto getChild = TreeUtils::getChild;
-const auto getChildCount = TreeUtils::getChildCount;
-
-IValue ProgramHandler::run(IAST* root) {
-    pANTLR3_COMMON_TOKEN tok = root->getToken(root);
-    int res;
-
+shared_ptr<IValue> ProgramHandler::run(IAST* root) {
+    shared_ptr<IValue> res;
     MasterChain* chain = MasterChain::getInstance();
-    // root for AST of the file
-    if (!tok) {
-        int cnt;
-        cnt = root->getChildCount(root);
-        for (int i = 0; i < cnt; i++)
-        {
-            res = chain->process(getChild(root, i), this->vars);
-        }
-        return res;
-    }
 
-    // tree with a token, some element in the code 
-    switch (tok->type)
+    switch (root->getTokenType())
     {
-    case BLOCK:
-    {
-        std::unique_ptr<Context> newCtx = std::make_unique<Context>();        
-
-        int cnt = root->getChildCount(root), res;
-        for (int i = 0; i < cnt; i++)
-        {
-            res = chain->process(getChild(root, i), newCtx.get());
+        case IAST::NONE_TOKEN: {
+            // root for AST of the file
+            int cnt;
+            cnt = root->getChildCount();
+            for (int i = 0; i < cnt; i++)
+            {
+                res = chain->process(root->getChild(i), this->vars);
+            }
+            return res;
         }
-        return res;
-    }
+        case BLOCK:
+        {
+            std::unique_ptr<Context> newCtx = std::make_unique<Context>();
 
-    default:
-        return handle_error("unknown handler: " + std::string(getText(root)));
+            int cnt = root->getChildCount();
+            for (int i = 0; i < cnt; i++)
+            {
+                res = chain->process(root->getChild(i), newCtx.get());
+            }
+            return res;
+        }
+
+        default:
+            handle_error("unknown handler: " + std::string(root->getText()));
     }
 
 }
@@ -52,6 +45,7 @@ IMaster* ProgramHandler::ProgramFactory::create(Context *ctx) {
     return new ProgramHandler(ctx);
 }
 
-bool ProgramHandler::ProgramFactory::isValid(pANTLR3_BASE_TREE tree) {
-    return getTokenType(tree) == BLOCK;
+bool ProgramHandler::ProgramFactory::isValid(IAST* tree) {
+    return tree->getTokenType() == BLOCK;
+}
 }

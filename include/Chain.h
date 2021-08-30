@@ -7,18 +7,24 @@
 #include "IfHandler.h"
 #include "PrintHandler.h"
 
-class MasterChain {
-    IFactory* headF;
-    MasterChain() {
-        // init factory linkedlist
-        headF = new PrintHandler::PrintFactory(nullptr);
-        headF = new IfHandler::IFFactory(headF);
-        headF = new ExprHandler::ExprFactory(headF);
-        headF = new ProgramHandler::ProgramFactory(headF);
-    }
-public:
-    static MasterChain* getInstance();
-    int process(pANTLR3_BASE_TREE, Context* ctx);
-};
+namespace MYLANG {
 
+    class MasterChain {
+        IFactory *headF;
+
+        MasterChain() {
+            // init factory linkedlist
+            headF = new PrintHandler::PrintFactory(nullptr);
+            headF = new IfHandler::IFFactory(headF);
+            headF = new ExprHandler::ExprFactory(headF);
+            headF = new ProgramHandler::ProgramFactory(headF);
+        }
+
+    public:
+        static MasterChain *getInstance();
+
+        std::shared_ptr<IValue> process(IAST *, Context *ctx);
+    };
+
+}
 #endif

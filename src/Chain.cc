@@ -1,27 +1,28 @@
 #include "Chain.h"
 #include <iostream>
 
-MasterChain* MasterChain::getInstance() {
-    static MasterChain instance;
-    return &instance;
-}
+namespace MYLANG {
 
-
-IValue MasterChain::process(pANTLR3_BASE_TREE tree, Context* ctx) {
-    IFactory* pf = headF;
-
-    while (pf != nullptr)
-    {
-        if (pf->isValid(tree)) {
-            IMaster* master = pf->create(ctx);
-            IValue* res = master->run(tree);
-            delete master;
-            return res;
-        }
-        pf = pf->next;
+    MasterChain *MasterChain::getInstance() {
+        static MasterChain instance;
+        return &instance;
     }
 
-    std::cout << "Cannot process unknown token" << std::endl;
-    return -1;
-}
 
+    std::shared_ptr<IValue> MasterChain::process(IAST *tree, Context *ctx) {
+        IFactory *pf = headF;
+
+        while (pf != nullptr) {
+            if (pf->isValid(tree)) {
+                IMaster *master = pf->create(ctx);
+                std::shared_ptr<IValue> res = master->run(tree);
+                delete master;
+                return res;
+            }
+            pf = pf->next;
+        }
+
+        return nullptr;
+    }
+
+}

@@ -2,27 +2,25 @@
 #include "Chain.h"
 #include "TreeUtils.h"
 
-const auto getTokenType = TreeUtils::getTokenType;
-const auto getText = TreeUtils::getText;
-const auto getChild = TreeUtils::getChild;
-const auto getChildCount = TreeUtils::getChildCount;
+namespace MYLANG {
 
-IValue PrintHandler::run(IAST* root) {
-    pANTLR3_COMMON_TOKEN tok = root->getToken(root);
-    int res = -1;
+    shared_ptr<IValue> PrintHandler::run(IAST *root) {
+        std::shared_ptr<IValue> res;
+        // root for AST of the file
+        if (root->getTokenType() == PRINT) {
+            res = MasterChain::getInstance()->process(root->getChild(0), this->vars);
+            return res;
+        }
 
-    // root for AST of the file
-    if (tok->type == PRINT) {
-        res = MasterChain::getInstance()->process(getChild(root, 0), this->vars);
+        handle_error("unknown handler: " + std::string(root->getText()));
     }
 
-    return handle_error("unknown handler: " + std::string(getText(root)));
-}
+    IMaster *PrintHandler::PrintFactory::create(Context *ctx) {
+        return new PrintHandler(ctx);
+    }
 
-IMaster* PrintHandler::PrintFactory::create(Context* ctx) {
-    return new PrintHandler(ctx);
-}
+    bool PrintHandler::PrintFactory::isValid(IAST *tree) {
+        return tree->getTokenType() == PRINT;
+    }
 
-bool PrintHandler::PrintFactory::isValid(pANTLR3_BASE_TREE tree) {
-    return getTokenType(tree) == PRINT;
 }

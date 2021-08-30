@@ -7,28 +7,34 @@
 #include <iostream>
 #include <tree/ast.h>
 
-class IMaster {
-protected: 
-    Context* vars;
-public:
-    IMaster(Context *v) : vars(v) {}
-    virtual ~IMaster() {}
+namespace MYLANG {
 
-    virtual IValue run(IAST* root) = 0;
-    virtual void handle_error(string msg) {
-        throw std::runtime_error(msg);
-    }
-};
+    class IMaster {
+    protected:
+        Context *vars;
+    public:
+        IMaster(Context *v) : vars(v) {}
+
+        virtual ~IMaster() {}
+
+        virtual shared_ptr<IValue> run(IAST *root) = 0;
+
+        virtual void handle_error(string msg) {
+            throw std::runtime_error(msg);
+        }
+    };
 
 
+    class IFactory {
+    public:
+        IFactory(IFactory *n) : next(n) {}
 
-class IFactory {
-public:
-    IFactory(IFactory* n) : next(n) {}
+        virtual IMaster *create(Context *) = 0;
 
-    virtual IMaster* create(Context*) = 0;
-    virtual bool isValid(pANTLR3_BASE_TREE) = 0;
-    IFactory* next;
-};
+        virtual bool isValid(IAST *) = 0;
 
+        IFactory *next;
+    };
+
+}
 #endif
