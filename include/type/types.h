@@ -6,6 +6,7 @@
 #include <utility>
 
 using std::shared_ptr;
+using std::string;
 
 namespace MYLANG {
 
@@ -71,15 +72,17 @@ namespace MYLANG {
 
     class StringValue : public IValue {
     private:
-        std::string val;
+        string val;
     public:
         explicit StringValue(const char *str) : val(str) {}
-        explicit StringValue(std::string& str) : s
-        explicit StringValue(std::string &&str) {
+        explicit StringValue(string  str) : val(std::move(str)) {}
+
+        explicit StringValue(string &&str) {
             val = std::move(str);
         }
 
-        const std::string &getValue() const { return val; }
+        const string &getValue() const { return val; }
+        void setValue(string&& str) { val = std::move(str); }
         ValueType getType() const { return STR; }
         shared_ptr<IValue> accept(IVisitor* visitor) {return visitor->visitString(this);};
 

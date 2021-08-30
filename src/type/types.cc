@@ -62,4 +62,37 @@ namespace MYLANG {
         }
         return tmp;
     }
+
+    shared_ptr<IValue> StringValue::arithOp(shared_ptr<IValue> other, int type) {
+        static ToDoubleVisitor visitor;
+
+        shared_ptr<StringValue> tmp;
+        // when the other operand has equal or wider type (like double, string, etc), call the
+        // other's member function
+        switch (type) {
+            case PLUS:
+                tmp = other->accept(&visitor);
+                tmp->setValue(getValue() + tmp->getValue()); break;
+            case MINUS:
+                throw std::runtime_error("string subtraction is not supported ");
+            case DIV:
+                throw std::runtime_error("string division is not supported ");
+
+            case TIMES:     // special
+                // if other is also string, concate it to this string
+                StringValue* sv = dynamic_cast<StringValue*>(other.get());
+                if (sv != nullptr) {
+                    tmp->setValue(tmp->getValue() + getValue());
+                    break;
+                }
+
+                // if other is int value, duplicate this string n times
+                tmp = accept(&visitor); // copy this string to temporary
+                for (int i = 1; i < tmp->getValue(); i++) {
+                    tmp->setValue(tmp->getValue() + getValue()); // append this string to temporary, n - 1 times
+                }
+                break;
+        }
+        return tmp;
+    }
 }
