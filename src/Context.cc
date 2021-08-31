@@ -1,7 +1,6 @@
 #include "Context.h"
 #include <cassert>
 
-namespace MYLANG {
 
     bool Context::isDefined(string key) {
         if (mmap.count(key)) return 1;
@@ -46,4 +45,3 @@ namespace MYLANG {
         mmap[key] = val;
     }
 
-}

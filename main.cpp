@@ -4,18 +4,14 @@
 #include "ProgramHandler.h"
 #include <cassert>
 #include <string>
-#include<iostream>
-#include <tree/ast.h>
-#include <tree/AntlrASTWrapper.h>
-#include <tree/CustomAST.h>
-#include <CustomLexer.h>
+#include <memory>
+#include <ast.h>
+#include <AntlrASTWrapper.h>
 
-using std::string;
-using std::map;
-using MYLANG::ProgramHandler;
-using MYLANG::Context;
+using namespace std;
 
 AntlrASTWrapper* genAstAntlr(char* filename) {
+    /*
     pANTLR3_INPUT_STREAM input = antlr3FileStreamNew((pANTLR3_UINT8)filename, ANTLR3_ENC_8BIT);
 
     pLangLexer lex = LangLexerNew(input);
@@ -27,6 +23,8 @@ AntlrASTWrapper* genAstAntlr(char* filename) {
     LangParser_prog_return r = parser->prog(parser);
 
     return new AntlrASTWrapper(r.tree);
+*/
+    return nullptr;
 }
 
 //CustomAST* genCustomAST(char* filename) {
@@ -37,9 +35,8 @@ int main(int argc, char** argv) {
     assert(argc > 1);
 
     IAST* root = genAstAntlr(argv[1]);
-    ProgramHandler eval(new Context);
+    ProgramHandler eval(make_shared<Context>());
     eval.run(root);
-
 
     return 0;
 }

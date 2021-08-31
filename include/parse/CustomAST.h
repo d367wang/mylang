@@ -1,11 +1,11 @@
 #ifndef _CUSTOMAST_H
 #define _CUSTOMAST_H
-
+#include "ast.h"
 
 class CustomAST {
 public:
     int getTokenType();
-    std::string getText();
+    string getText();
     IAST* getChild(unsigned int i);
     int getChildCount();
 };

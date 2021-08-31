@@ -4,7 +4,7 @@ int CustomAST::getTokenType() {
 
 }
 
-std::string CustomAST::getText() {
+string CustomAST::getText() {
 
 }
 

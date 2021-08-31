@@ -1,9 +1,7 @@
 #include "IfHandler.h"
-#include "TreeUtils.h"
 #include "Chain.h"
 #include <iostream>
 
-namespace MYLANG {
 
     shared_ptr<IValue> IfHandler::run(IAST *root) {
         assert(root->getTokenType() == IF);
@@ -32,5 +30,3 @@ namespace MYLANG {
         return tree->getTokenType() == IF;
     }
 
-
-}

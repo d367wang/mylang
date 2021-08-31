@@ -5,25 +5,59 @@
 #include "LangParser.h"
 #include "Context.h"
 #include "ast.h"
-#include "types.h"
 #include <memory>
+#include <stdexcept>
 
-using std::shared_ptr;
+using namespace std;
 
-namespace MYLANG {
+    class Context;
+    class IValue;
+    class IVisitor;
+
+	enum class ValueType {
+        INT32, DOUBLE, STR
+    };
+
+    class IValue {
+    public:
+        IValue() {}
+        virtual ~IValue() {}
+
+        virtual ValueType getType() = 0;
+        virtual shared_ptr<IValue> accept(IVisitor* visitor) = 0;
+
+        shared_ptr<IValue> binOp(shared_ptr<IValue> other, int type);
+        virtual shared_ptr<IValue> cmpOp(shared_ptr<IValue> other, int type) = 0;
+        virtual shared_ptr<IValue> arithOp(shared_ptr<IValue> other, int type) = 0;
+
+        static const shared_ptr<IValue> pTrueVal, pFalseVal, pNullVal;
+    };
+
+
+    class IntValue;
+    class DoubleValue;
+    class StringValue;
+
+	class IVisitor {
+	public:
+		virtual shared_ptr<IValue> visitInt(IntValue* ival) = 0;
+		virtual shared_ptr<IValue> visitDouble(DoubleValue* dval) = 0;
+		virtual shared_ptr<IValue> visitString(StringValue* sval) = 0;
+	};
+
 
     class IMaster {
     protected:
         shared_ptr<Context> vars;
     public:
-        IMaster(shared<Context> v) : vars(v) {}
+        IMaster(shared_ptr<Context> v) : vars(v) {}
 
         virtual ~IMaster() {}
 
         virtual shared_ptr<IValue> run(IAST *root) = 0;
 
         virtual void handle_error(string msg) {
-            throw std::runtime_error(msg);
+            throw runtime_error(msg);
         }
     };
 
@@ -39,5 +73,5 @@ namespace MYLANG {
         IFactory *next;
     };
 
-}
+
 #endif

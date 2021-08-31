@@ -2,7 +2,7 @@
 #define _IFMASTER_H
 
 #include "base.h"
-namespace MYLANG {
+
     class IfHandler : public IMaster {
     private:
         /* data */
@@ -23,5 +23,5 @@ namespace MYLANG {
         };
 
     };
-}
+
 #endif

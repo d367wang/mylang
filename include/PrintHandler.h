@@ -2,7 +2,6 @@
 #define _PRINT_HANDLER_H
 
 #include "base.h"
-namespace MYLANG {
 
     class PrintHandler : public IMaster {
     private:
@@ -23,5 +22,5 @@ namespace MYLANG {
             bool isValid(IAST *);
         };
     };
-}
+
 #endif

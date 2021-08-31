@@ -9,11 +9,11 @@ int AntlrASTWrapper::getTokenType() {
 
 IAST* AntlrASTWrapper::getChild(uint32_t i) {
     assert(i < tree->getChildCount(tree));
-    return tree->getChild(tree, i);
+    return new AntlrASTWrapper((pANTLR3_BASE_TREE) tree->getChild(tree, i));
 }
 
-const std::string AntlrASTWrapper::getText() {
-    return tree->getText(tree)->chars;
+const string AntlrASTWrapper::getText() {
+    return (const char*) tree->getText(tree)->chars;
 }
 
 

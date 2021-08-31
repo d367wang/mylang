@@ -1,11 +1,8 @@
 #include "ExprHandler.h"
 #include "Chain.h"
 #include <string>
+#include <stdexcept>
 
-using std::string;
-using std::shared_ptr;
-
-namespace MYLANG {
 
     shared_ptr<IValue> ExprHandler::run(IAST *root) {
         MasterChain *chain = MasterChain::getInstance();
@@ -14,7 +11,8 @@ namespace MYLANG {
         switch (root->getTokenType()) {
             case INT: {
                 const string &str = root->getText();
-                return std::make_shared<IntValue>(std::stoi(root->getText()));
+                shared_ptr<IntValue> p = make_shared<IntValue>(stoi(root->getText()));
+                return static_pointer_cast<IValue>(p);
             }
 
             case ID: {
@@ -28,8 +26,7 @@ namespace MYLANG {
             case DEF: {
                 string varname = root->getChild(0)->getText();
                 if (vars->isInCurrent(varname)) {
-                    std::cout << "redefined variable \"" << varname << "\"" << std::endl;
-                    exit(-1);
+                    throw runtime_error("redefined variable \"" + varname + "\"");
                 }
 
                 if (root->getChildCount() > 1) {
@@ -38,7 +35,7 @@ namespace MYLANG {
                 } else {
                     // by default, initialized with 0
                     vars->addVar(varname);
-                    res = 0;
+                    res = IValue::pNullVal;
                 }
 
                 return res;
@@ -48,7 +45,11 @@ namespace MYLANG {
             case PLUS:
             case MINUS:
             case TIMES:
-            case DIV:
+            case DIV: {
+                shared_ptr<IValue> lop = chain->process(root->getChild(0), this->vars);
+                shared_ptr<IValue> rop = chain->process(root->getChild(1), this->vars);
+                return lop.get()->arithOp(rop, root->getTokenType());
+            }
             case EQ:
             case NE:
             case GT:
@@ -57,13 +58,13 @@ namespace MYLANG {
             case LE: {
                 shared_ptr<IValue> lop = chain->process(root->getChild(0), this->vars);
                 shared_ptr<IValue> rop = chain->process(root->getChild(1), this->vars);
-                lop->binOp(rop, root->getTokenType());
-            } break;
+                return lop.get()->cmpOp(rop, root->getTokenType());
+            } 
 
             case ASSIGN: {
                 string varname(root->getChild(0)->getText());
                 if (!vars->isDefined(varname)) {
-                    throw std::runtime_error("variable '" + varname + "' is not defined");
+                    throw runtime_error("variable '" + varname + "' is not defined");
                 }
                 res = chain->process(root->getChild(1), this->vars);
                 vars->setVal(varname, res);
@@ -71,7 +72,7 @@ namespace MYLANG {
             }
 
             default:
-                throw std::runtime_error("unknown handler: " + std::string(root->getText()));
+                throw runtime_error("unknown handler: " + string(root->getText()));
         }
 
     }
@@ -93,5 +94,3 @@ namespace MYLANG {
     }
 
 
-
-}

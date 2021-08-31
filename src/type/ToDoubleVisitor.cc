@@ -1,21 +1,15 @@
 #include "visitor.h"
+#include "types.h"
 
-namespace MYLANG {
-
-    shared_ptr<DoubleValue> visitInt(IntValue* ival) {
-        return std::shared_ptr<DoubleValue>((double) ival->getValue());
+    shared_ptr<IValue> ToDoubleVisitor::visitInt(IntValue* ival) {
+        return shared_ptr<IValue>(new DoubleValue(ival->getValue()));
     }
 
-    shared_ptr<DoubleValue> visitBool(BoolValue* bval) {
-        return std::shared_ptr<DoubleValue>((double) bval->getValue());
+    shared_ptr<IValue> ToDoubleVisitor::visitDouble(DoubleValue* dval) {
+        return shared_ptr<IValue>(new DoubleValue(dval->getValue()));
     }
 
-    shared_ptr<DoubleValue> visitDouble(DoubleValue* dval) {
-        return std::shared_ptr<DoubleValue>(dval->getValue());
+    shared_ptr<IValue> ToDoubleVisitor::visitString(StringValue* sval) {
+        throw runtime_error("cannot convert string to double");
     }
 
-    shared_ptr<DoubleValue> visitString(StringValue* sval) {
-        throw std::runtime_error("cannot convert string to double");
-    }
-
-}

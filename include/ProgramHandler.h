@@ -2,7 +2,6 @@
 #define _PROGRAM_HANDLER_H
 
 #include "base.h"
-namespace MYLANG {
 
     class ProgramHandler : public IMaster {
     private:
@@ -23,5 +22,5 @@ namespace MYLANG {
             bool isValid(IAST *tree);
         };
     };
-}
+
 #endif

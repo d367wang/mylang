@@ -1,21 +1,15 @@
 #include "visitor.h"
+#include "types.h"
 
-namespace MYLANG {
-
-    shared_ptr<StringValue> ToStringVisitor::visitInt(IntValue* ival) {
-        return std::make_shared<StringValue>(std::to_string(ival->getValue()));
+    shared_ptr<IValue> ToStringVisitor::visitInt(IntValue* ival) {
+        return make_shared<StringValue>(to_string(ival->getValue()));
     }
 
-    shared_ptr<StringValue> ToStringVisitor::visitBool(BoolValue* bval) {
-        return std::make_shared<StringValue>(bval->getValue() ? "true" : "false");
+    shared_ptr<IValue> ToStringVisitor::visitDouble(DoubleValue* dval) {
+        return make_shared<StringValue>(to_string(dval->getValue()));
     }
 
-    shared_ptr<StringValue> ToStringVisitor::visitDouble(DoubleValue* dval) {
-        return std::make_shared<StringValue>(std::to_string(dval->getValue()));
+    shared_ptr<IValue> ToStringVisitor::visitString(StringValue* sval) {
+        return make_shared<StringValue>(sval->getValue());
     }
 
-    shared_ptr<StringValue> ToStringVisitor::visitString(StringValue* sval) {
-        return sval;
-    }
-
-}

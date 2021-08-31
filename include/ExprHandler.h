@@ -3,15 +3,13 @@
 
 #include "base.h"
 
-namespace MYLANG {
-
     class ExprHandler : public IMaster {
     private:
         /* data */
     public:
         ExprHandler(shared_ptr<Context> ctx) : IMaster(ctx) {}
 
-        std::shared_ptr<IValue> run(IAST *root);
+        shared_ptr<IValue> run(IAST *root);
 
         class ExprFactory : public IFactory {
         private:
@@ -25,5 +23,4 @@ namespace MYLANG {
         };
 
     };
-}
 #endif

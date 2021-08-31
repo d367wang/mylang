@@ -7,8 +7,6 @@
 #include "IfHandler.h"
 #include "PrintHandler.h"
 
-namespace MYLANG {
-
     class MasterChain {
         IFactory *headF;
 
@@ -23,8 +21,7 @@ namespace MYLANG {
     public:
         static MasterChain *getInstance();
 
-        std::shared_ptr<IValue> process(IAST *, shared_ptr<Context> ctx);
+        shared_ptr<IValue> process(IAST *, shared_ptr<Context> ctx);
     };
 
-}
 #endif

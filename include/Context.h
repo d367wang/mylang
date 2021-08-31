@@ -4,13 +4,11 @@
 #include <map>
 #include <memory>
 #include <string>
-#include "type/types.h"
+#include "base.h"
 
-using std::string;
-using std::map;
-using std::shared_ptr;
+using namespace std;
 
-namespace MYLANG {
+    class IValue;
 
     class Context {
         Context *next; // outer scope
@@ -30,5 +28,4 @@ namespace MYLANG {
         void addVar(string key, shared_ptr<IValue> val);
     };
 
-}
 #endif
