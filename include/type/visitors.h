@@ -2,10 +2,11 @@
 #define _VISITOR_H
 
 #include <memory>
+#include "IVisitor.h"
 #include "base.h"
 
 
-    class ToIntVisitor : public IVisitor {
+class ToIntVisitor : public IVisitor {
     public:
         shared_ptr<IValue> visitInt(IntValue* ival);
 

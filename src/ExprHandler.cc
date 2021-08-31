@@ -2,6 +2,7 @@
 #include "Chain.h"
 #include <string>
 #include <stdexcept>
+#include "types.h"
 
 
     shared_ptr<IValue> ExprHandler::run(IAST *root) {
@@ -11,7 +12,8 @@
         switch (root->getTokenType()) {
             case INT: {
                 const string &str = root->getText();
-                shared_ptr<IntValue> p = make_shared<IntValue>(stoi(root->getText()));
+                int ival = stoi(root->getText());
+                shared_ptr<IntValue> p = shared_ptr<IntValue>(new IntValue(ival));
                 return static_pointer_cast<IValue>(p);
             }
 
@@ -54,7 +56,7 @@
             case NE:
             case GT:
             case GE:
-            case LT:
+            case LESSTHAN:
             case LE: {
                 shared_ptr<IValue> lop = chain->process(root->getChild(0), this->vars);
                 shared_ptr<IValue> rop = chain->process(root->getChild(1), this->vars);

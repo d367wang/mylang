@@ -1,12 +1,12 @@
 #include "base.h"
 #include "types.h"
 #include "base.h"
-#include "visitor.h"
+#include "visitors.h"
 #include <iostream>
 
-    static const shared_ptr<IValue> pTrueVal(new IntValue(1));
-    static const shared_ptr<IValue> pFalseVal(new IntValue(0));
-    static const shared_ptr<IValue> pNullVal(new StringValue(""));
+const shared_ptr<IValue> IValue::pTrueVal(new IntValue(1));
+const shared_ptr<IValue> IValue::pFalseVal(new IntValue(0));
+const shared_ptr<IValue> IValue::pNullVal(new StringValue(""));
 
 
 /**************************  Base ******************************/
@@ -24,8 +24,8 @@
             case EQ: return EQ;
             case NE: return NE;
             case GT: return LE;
-            case GE: return LT;
-            case LT: return GE;
+            case GE: return LESSTHAN;
+            case LESSTHAN: return GE;
             case LE: return GT;
             default: throw runtime_error("cperator not supported");
         }
@@ -38,10 +38,9 @@
         // other's member function
         if (other->getType() > ValueType::INT32) return other->arithOp(shared_ptr<IValue>(this), type);
 
-        shared_ptr<IntValue> tmp;
         // when the other operand has equal or wider type (like double, string, etc), call the
         // other's member function
-        tmp = other->accept(&visitor);
+        shared_ptr<IntValue> tmp = dynamic_pointer_cast<IntValue>(other->accept(&visitor));
         switch (type) {
             case PLUS:
                 tmp->setValue(getValue() + tmp->getValue()); break;

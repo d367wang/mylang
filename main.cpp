@@ -8,10 +8,10 @@
 #include <ast.h>
 #include <AntlrASTWrapper.h>
 
-using namespace std;
+//using namespace std;
 
 AntlrASTWrapper* genAstAntlr(char* filename) {
-    /*
+
     pANTLR3_INPUT_STREAM input = antlr3FileStreamNew((pANTLR3_UINT8)filename, ANTLR3_ENC_8BIT);
 
     pLangLexer lex = LangLexerNew(input);
@@ -23,8 +23,6 @@ AntlrASTWrapper* genAstAntlr(char* filename) {
     LangParser_prog_return r = parser->prog(parser);
 
     return new AntlrASTWrapper(r.tree);
-*/
-    return nullptr;
 }
 
 //CustomAST* genCustomAST(char* filename) {
