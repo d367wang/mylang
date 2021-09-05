@@ -1,5 +1,14 @@
-# Unresolved problems
+## A Dynamically Typed Language Interpreter
 
-1. error reporting and exit
+### Lanugage Feature
+- C-like Syntax
+- Dynamically typed (types determined at runtime)
+- External lexer&parser are used to generate syntax tree, see https://www.antlr3.org/
 
-2. reference a variable without defining
+### Language Syntax
+Support constructs: variable, expression, functions, scope
+- Variable defination:  `def var_name` (with/without initialization)
+- Supported types: integer / string
+- Flow control: conditional / loop 
+- Built-in functions: `print`
+
