@@ -21,6 +21,8 @@ public:
 
     shared_ptr<IValue> cmpOp(shared_ptr<IValue> other, int type);
     shared_ptr<IValue> arithOp(shared_ptr<IValue> other, int type);
+
+    friend ostream& operator<<(ostream& os, IntValue& val);
 };
 
 
@@ -38,6 +40,8 @@ public:
 
     shared_ptr<IValue> cmpOp(shared_ptr<IValue> other, int type);
     shared_ptr<IValue> arithOp(shared_ptr<IValue> other, int type);
+
+    friend ostream &operator<<(ostream &os, DoubleValue& val);
 };
 
 
@@ -58,6 +62,8 @@ public:
 
     shared_ptr<IValue> cmpOp(shared_ptr<IValue> other, int type);
     shared_ptr<IValue> arithOp(shared_ptr<IValue> other, int type);
+
+    friend ostream &operator<<(ostream &os, StringValue& val);
 };
 
 

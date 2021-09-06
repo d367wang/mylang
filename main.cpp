@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
     assert(argc > 1);
 
     IAST* root = genAstAntlr(argv[1]);
-    ProgramHandler eval(make_shared<Context>());
+    ProgramHandler eval(shared_ptr<Context>(new Context));
     eval.run(root);
 
     return 0;

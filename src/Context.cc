@@ -2,7 +2,7 @@
 #include <cassert>
 
 
-    bool Context::isDefined(string key) {
+    bool Context::isDefined(const string& key) {
         if (mmap.count(key)) return 1;
         Context *p = next;
         while (p != nullptr) {
@@ -11,7 +11,7 @@
         return 0;
     }
 
-    bool Context::isInCurrent(string key) {
+    bool Context::isInCurrent(const string& key) {
         return mmap.count(key);
     }
 

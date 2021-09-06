@@ -29,6 +29,7 @@ multExpr
 
 atom: INT
     | ID
+    | STRING
     | '('! expr ')'!
     ;
 

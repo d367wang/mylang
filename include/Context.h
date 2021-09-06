@@ -15,9 +15,9 @@ using namespace std;
         map<string, shared_ptr<IValue>> mmap;
 
     public:
-        bool isDefined(string key);
+        bool isDefined(const string& key);
 
-        bool isInCurrent(string key);
+        bool isInCurrent(const string& key);
 
         void setVal(string key, shared_ptr<IValue> val);
 

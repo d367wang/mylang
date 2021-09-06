@@ -71,6 +71,11 @@ const shared_ptr<IValue> IValue::pNullVal(new StringValue(""));
         }
     }
 
+ostream &operator<<(ostream &os, IntValue &val) {
+    os << val.getValue();
+    return os;
+}
+
 
 /*********************  Double ******************************/
     shared_ptr<IValue> DoubleValue::arithOp(shared_ptr<IValue> other, int type) {
@@ -112,6 +117,11 @@ const shared_ptr<IValue> IValue::pNullVal(new StringValue(""));
             default: throw runtime_error("cperator not supported");
         }
     }
+
+ostream &operator<<(ostream &os, DoubleValue& val) {
+    os << val.getValue();
+    return os;
+}
 
 
 /**************************  String ******************************/
@@ -170,3 +180,7 @@ const shared_ptr<IValue> IValue::pNullVal(new StringValue(""));
         return IValue::pNullVal;
     }
 
+ostream &operator<<(ostream &os, StringValue& val) {
+    os << val.getValue();
+    return os;
+}

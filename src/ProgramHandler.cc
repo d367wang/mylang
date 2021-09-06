@@ -1,6 +1,5 @@
 #include "ProgramHandler.h"
 #include "Chain.h"
-#include <iostream>
 #include <memory>
 #include "ast.h"
 
@@ -23,7 +22,7 @@ shared_ptr<IValue> ProgramHandler::run(IAST* root) {
         }
         case BLOCK:
         {
-            shared_ptr<Context> newCtx; // make_unique is not supported until 14
+            shared_ptr<Context> newCtx(new Context); // make_unique is not supported until 14
 
             int cnt = root->getChildCount();
             for (int i = 0; i < cnt; i++)
