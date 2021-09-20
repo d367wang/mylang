@@ -19,9 +19,17 @@ shared_ptr<IValue> ExprHandler::run(IAST *root) {
 
         case ID: {
             string s(root->getText());
+
+            IAST* func_def = vars->getFunc(s);
+            if (func_def != nullptr)
+                // If the id is a defined function, call the function
+                return chain->process(func_def, this->vars);
+
             if (!vars->isDefined(s)) {
-                handle_error("variable '" + s + "' is not defined");
+                handle_error("identifier '" + s + "' is not defined");
             }
+
+            // If the id is a variable, get the value
             return vars->getVal(s);
         }
 

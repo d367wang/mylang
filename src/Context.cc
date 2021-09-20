@@ -45,3 +45,18 @@
         mmap[key] = val;
     }
 
+void Context::addFunc(string fname, IAST *node) {
+    if (_func_table.count(fname))
+        throw runtime_error("redefine function: " + fname);
+    _func_table[fname] = node;
+}
+
+IAST *Context::getFunc(string fname) {
+    Context* p = this;
+    while (p != nullptr && !p->_func_table.count(fname))
+        p = p->next;
+    if (p == nullptr)
+        return nullptr;
+    return p->_func_table[fname];
+}
+

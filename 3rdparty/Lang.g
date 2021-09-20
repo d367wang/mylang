@@ -33,6 +33,10 @@ atom: INT
     | '('! expr ')'!
     ;
 
+func_expr
+    : ID^ '('! ')'!
+    ;
+
 if_expr
     : IF^ '('! condition_expr ')'! stmt ( (ELSE) => ELSE! stmt )?
     ;
@@ -44,6 +48,10 @@ for_expr
 while_expr
     : WHILE^ '('! condition_expr ')'! stmt
     | DO '{' stmt '}' WHILE '(' condition_expr ')' ';' -> ^(DOWHILE condition_expr stmt)
+    ;
+
+function_def
+    : FUNC^ ID'('! ')'! block
     ;
 
 init_expr
@@ -77,11 +85,19 @@ stmt: expr ';' -> expr  // tree rewrite syntax
     | for_expr
     | while_expr
     | PRINT^ expr (','! expr)* ';'!
+    | func_expr ';'!
     ;
 
+//prog
+//    : (stmt {
+//            pANTLR3_STRING s = $stmt.tree->toStringTree($stmt.tree);
+//            assert(s->chars);
+//            //printf("tree \%s\n", s->chars);
+//    })+
+//    ;
 prog
-    : (stmt {
-            pANTLR3_STRING s = $stmt.tree->toStringTree($stmt.tree);
+    : (function_def {
+            pANTLR3_STRING s = $function_def.tree->toStringTree($function_def.tree);
             assert(s->chars);
             //printf("tree \%s\n", s->chars);
     })+
@@ -112,6 +128,8 @@ DOT : ',';
 ASSIGN: '=';
 BLOCK: '{}';
 DEF: 'def';
+
+FUNC: 'func';
 
 INT :	'-'? '0'..'9' + 
     ;

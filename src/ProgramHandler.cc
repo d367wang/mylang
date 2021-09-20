@@ -16,10 +16,17 @@ shared_ptr<IValue> ProgramHandler::run(IAST* root) {
             cnt = root->getChildCount();
             for (int i = 0; i < cnt; i++)
             {
-                res = chain->process(root->getChild(i), this->vars);
+                IAST* node = root->getChild(i);
+                assert(node->getTokenType() == FUNC);
+                if (node->getChild(0)->getText() == "main") {
+                    res = chain->process(node->getChild(1), this->vars);
+                } else {
+                    this->vars->addFunc(node->getChild(0)->getText(), node);
+                }
             }
             return res;
         }
+
         case BLOCK:
         {
             shared_ptr<Context> newCtx(new Context); // make_unique is not supported until 14
